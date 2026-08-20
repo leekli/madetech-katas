@@ -143,7 +143,7 @@ func TestCalculateScoreForTurnFrame_ReturnsZeroForNoScore(test *testing.T) {
 	assert.Equal(test, expected, output)
 }
 
-func TestCalculateScoreForTurnFrame_ReturnsScoreForNonStrikeAndNonSpare(test *testing.T) {
+func TestCalculateScoreForTurnFrame_ReturnsScoreForNonStrikeAndNonSpare_SingleFrame(test *testing.T) {
 	inputCurrentFrame := "45"
 	inputNextFrame := ""
 	expected := 9

@@ -79,8 +79,11 @@ func IsSpare(frame []string) bool {
 func CalculateScoreForTurnFrame(currentFrame string, nextFrame string) int {
 	frameTotal := 0
 
-	// If the frame is not a strike or spare, get the numeric total of what was knocked down
-	if len(currentFrame) >= 1 && string(currentFrame[0]) != "X" && len(currentFrame) >= 2 && string(currentFrame[1]) != "/" {
+	// Split out current frame into individual chars
+	currentFrameScoresSplit := strings.Split(currentFrame, "")
+
+	// If the frame is not a Strike (X) or Spare (/), get the numeric total of what was knocked down
+	if !IsStrike(currentFrameScoresSplit) && !IsSpare(currentFrameScoresSplit) {
 		currentFrameTotal := CalculateScoreForNoStrikeOrSpare(currentFrame)
 
 		frameTotal += currentFrameTotal
@@ -94,9 +97,11 @@ func CalculateScoreForNoStrikeOrSpare(currentFrame string) int {
 
 	// Scores come in as a string pair, e.g. "13". Split them out and convert to numbers where possible
 	currentFrameScoresSplit := strings.Split(currentFrame, "")
+
+	// If the frame does not include a Strike (X) or Spare (/) then calculate the single current frames total score and add to the total
 	currentFrameIntScores := convertNumericStringsToIntArray(currentFrameScoresSplit)
 
-	// Calculate the current frame total
+	// Calculate the current frame total for int scores only
 	for _, num := range currentFrameIntScores {
 		frameTotal += num
 	}
