@@ -272,7 +272,7 @@ func TestCalculateScoreForTurnFrame_ReturnsScoreForSpareAndNextTurn(test *testin
 }
 
 func TestCalculateGameScoreTotal_ReturnsTotal(test *testing.T) {
-	input := "X 45 4/ 32"
+	input := "X 45 4/ 32 00 00 00 00 00 00"
 	expected := 46
 
 	output := CalculateGameScoreTotal(input)
@@ -299,31 +299,67 @@ func TestCalculateGameScoreTotal_ReturnsTwentyForAllOnes(test *testing.T) {
 }
 
 func TestCalculateGameScoreTotal_IncludesSpareBonusFromStrike(test *testing.T) {
-	input := "X 4/ 32"
+	input := "X 4/ 32 00 00 00 00 00 00 00"
 	expected := 38
 
 	output := CalculateGameScoreTotal(input)
 
 	assert.Equal(test, expected, output)
 
-	input = "4/ X 32"
+	input = "4/ X 32 00 00 00 00 00 00 00"
 	expected = 40
 
 	output = CalculateGameScoreTotal(input)
 
 	assert.Equal(test, expected, output)
 
-	input = "X 45 32"
+	input = "X 45 32 00 00 00 00 00 00 00"
 	expected = 33
 
 	output = CalculateGameScoreTotal(input)
 
 	assert.Equal(test, expected, output)
 
-	input = "4/ 32 11"
+	input = "4/ 32 11 00 00 00 00 00 00 00"
 	expected = 20
 
 	output = CalculateGameScoreTotal(input)
 
 	assert.Equal(test, expected, output)
 }
+
+func TestCalculateGameScoreTotal_IncludesOneBonusBallAfterTenthFrameSpare(test *testing.T) {
+	input := "00 00 00 00 00 00 00 00 00 4/ 5"
+	expected := 15
+
+	output := CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateGameScoreTotal_IncludesStrikeBonusAfterTenthFrameSpare(test *testing.T) {
+	input := "00 00 00 00 00 00 00 00 00 4/ X"
+	expected := 20
+
+	output := CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+}
+
+// func TestCalculateGameScoreTotal_IncludesTwoBonusBallsAfterTenthFrameStrike(test *testing.T) {
+// 	input := "00 00 00 00 00 00 00 00 00 X 5 4"
+// 	expected := 19
+
+// 	output := CalculateGameScoreTotal(input)
+
+// 	assert.Equal(test, expected, output)
+// }
+
+// func TestCalculateGameScoreTotal_IncludesTwoStrikeBonusBallsAfterTenthFrameStrike(test *testing.T) {
+// 	input := "00 00 00 00 00 00 00 00 00 X X X"
+// 	expected := 30
+
+// 	output := CalculateGameScoreTotal(input)
+
+// 	assert.Equal(test, expected, output)
+// }
