@@ -173,6 +173,10 @@ func CalculateScoreForStrike(currentFrame string, nextFrame string) int {
 		frameTotal += nextFrameTotal
 	}
 
+	if IsStrike(nextFrameScoresSplit) || IsSpare(nextFrameScoresSplit) {
+		frameTotal += 10
+	}
+
 	return frameTotal
 }
 
@@ -200,6 +204,10 @@ func CalculateScoreForSpare(currentFrame string, nextFrame string) int {
 		nextFrameTotal := CalculateScoreForNoStrikeOrSpare(firstRollOnly)
 
 		frameTotal += nextFrameTotal
+	}
+
+	if IsStrike(nextFrameScoresSplit) || IsSpare(nextFrameScoresSplit) {
+		frameTotal += 10
 	}
 
 	return frameTotal

@@ -64,6 +64,16 @@ func TestIsStrike_ReturnsFalseIfFrameHasMoreThanOneElement(test *testing.T) {
 
 	assert.Equal(test, expected, output)
 }
+
+func TestIsStrike_ReturnsFalseForSingleNonStrikeRoll(test *testing.T) {
+	input := []string{"9"}
+	expected := false
+
+	output := IsStrike(input)
+
+	assert.Equal(test, expected, output)
+}
+
 func TestIsStrike_ReturnsFalseForNotAStrike(test *testing.T) {
 	input := []string{"2", "/"}
 	expected := false
@@ -90,6 +100,16 @@ func TestIsSpare_ReturnsFalseIfFrameHasLessThanTwoElements(test *testing.T) {
 
 	assert.Equal(test, expected, output)
 }
+
+func TestIsSpare_ReturnsFalseIfFrameHasMoreThanTwoElements(test *testing.T) {
+	input := []string{"3", "/", "2"}
+	expected := false
+
+	output := IsSpare(input)
+
+	assert.Equal(test, expected, output)
+}
+
 func TestIsSpare_ReturnsFalseForNotASpare(test *testing.T) {
 	input := []string{"2", "3"}
 	expected := false
@@ -143,10 +163,60 @@ func TestCalculateScoreForStrike_ReturnsScoreForCurrentAndNextFrame(test *testin
 	assert.Equal(test, expected, output)
 }
 
+func TestCalculateScoreForStrike_ReturnsZeroForNonStrikeCurrentFrame(test *testing.T) {
+	inputCurrentFrame := "45"
+	inputNextFrame := "32"
+	expected := 0
+
+	output := CalculateScoreForStrike(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForStrike_IncludesBothRollsWhenNextFrameIsASpare(test *testing.T) {
+	inputCurrentFrame := "X"
+	inputNextFrame := "4/"
+	expected := 20
+
+	output := CalculateScoreForStrike(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForStrike_IncludesNextStrikeBonus(test *testing.T) {
+	inputCurrentFrame := "X"
+	inputNextFrame := "X"
+	expected := 20
+
+	output := CalculateScoreForStrike(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
 func TestCalculateScoreForSpare_ReturnsScoreForCurrentAndNextFrameFirstRollOnly(test *testing.T) {
 	inputCurrentFrame := "4/"
 	inputNextFrame := "32"
 	expected := 13
+
+	output := CalculateScoreForSpare(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForSpare_ReturnsZeroForNonSpareCurrentFrame(test *testing.T) {
+	inputCurrentFrame := "45"
+	inputNextFrame := "32"
+	expected := 0
+
+	output := CalculateScoreForSpare(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForSpareIncludesStrikeAsNextRoll(test *testing.T) {
+	inputCurrentFrame := "4/"
+	inputNextFrame := "X"
+	expected := 20
 
 	output := CalculateScoreForSpare(inputCurrentFrame, inputNextFrame)
 
@@ -204,6 +274,24 @@ func TestCalculateScoreForTurnFrame_ReturnsScoreForSpareAndNextTurn(test *testin
 func TestCalculateGameScoreTotal_ReturnsTotal(test *testing.T) {
 	input := "X 45 4/ 32"
 	expected := 46
+
+	output := CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateGameScoreTotal_ReturnsZeroForAllGutters(test *testing.T) {
+	input := "00 00 00 00 00 00 00 00 00 00"
+	expected := 0
+
+	output := CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateGameScoreTotal_ReturnsTwentyForAllOnes(test *testing.T) {
+	input := "11 11 11 11 11 11 11 11 11 11"
+	expected := 20
 
 	output := CalculateGameScoreTotal(input)
 
