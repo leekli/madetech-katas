@@ -94,17 +94,7 @@ func CalculateScoreForNoStrikeOrSpare(currentFrame string) int {
 
 	// Scores come in as a string pair, e.g. "13". Split them out and convert to numbers where possible
 	currentFrameScoresSplit := strings.Split(currentFrame, "")
-	currentFrameIntScores := []int{}
-
-	for _, value := range currentFrameScoresSplit {
-		num, err := strconv.Atoi(value)
-
-		if err != nil {
-			fmt.Println("Error: ", err)
-		}
-
-		currentFrameIntScores = append(currentFrameIntScores, num)
-	}
+	currentFrameIntScores := convertNumericStringsToIntArray(currentFrameScoresSplit)
 
 	// Calculate the current frame total
 	for _, num := range currentFrameIntScores {
@@ -112,4 +102,20 @@ func CalculateScoreForNoStrikeOrSpare(currentFrame string) int {
 	}
 
 	return frameTotal
+}
+
+func convertNumericStringsToIntArray(frame []string) []int {
+	frameIntScores := []int{}
+
+	for _, value := range frame {
+		num, err := strconv.Atoi(value)
+
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+
+		frameIntScores = append(frameIntScores, num)
+	}
+
+	return frameIntScores
 }
