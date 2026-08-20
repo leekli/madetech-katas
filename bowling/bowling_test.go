@@ -297,3 +297,33 @@ func TestCalculateGameScoreTotal_ReturnsTwentyForAllOnes(test *testing.T) {
 
 	assert.Equal(test, expected, output)
 }
+
+func TestCalculateGameScoreTotal_IncludesSpareBonusFromStrike(test *testing.T) {
+	input := "X 4/ 32"
+	expected := 38
+
+	output := CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+
+	input = "4/ X 32"
+	expected = 40
+
+	output = CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+
+	input = "X 45 32"
+	expected = 33
+
+	output = CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+
+	input = "4/ 32 11"
+	expected = 20
+
+	output = CalculateGameScoreTotal(input)
+
+	assert.Equal(test, expected, output)
+}
