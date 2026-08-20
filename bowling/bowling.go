@@ -6,7 +6,9 @@ import (
 	"strings"
 )
 
-/* Game:
+/* Bowling Game Kata:
+- Kata link: https://learn.madetech.com/technology/katas/bowling/
+
 - A game has 10 'turns' or 'frames'
 - Bowling has 10 pins to knock down
 - Each turn/try is 2 rolls of the ball each
@@ -23,7 +25,14 @@ import (
 */
 
 func main() {
-	fmt.Println("Hello!")
+	input := "X 45 4/ 32"
+
+	score := CalculateGameScoreTotal(input)
+
+	fmt.Println("==========================")
+	fmt.Println("The provided game is:", input)
+	fmt.Println("The total score for this game is:", score)
+	fmt.Println("==========================")
 }
 
 func ParseInputToFrameSlice(input string) [][]string {
