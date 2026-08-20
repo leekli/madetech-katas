@@ -76,6 +76,26 @@ func IsSpare(frame []string) bool {
 	return false
 }
 
+func CalculateGameScoreTotal(gameInput string) int {
+	gameTotal := 0
+
+	splitGameScores := strings.Split(gameInput, " ")
+
+	// Get the scores of every game up to but not including the final turn
+	for i := 0; i < (len(splitGameScores) - 1); i++ {
+		frameScore := CalculateScoreForTurnFrame(splitGameScores[i], splitGameScores[i+1])
+
+		gameTotal += frameScore
+	}
+
+	// Now get the score of the final turn
+	frameScore := CalculateScoreForTurnFrame(splitGameScores[len(splitGameScores)-1], "")
+
+	gameTotal += frameScore
+
+	return gameTotal
+}
+
 func CalculateScoreForTurnFrame(currentFrame string, nextFrame string) int {
 	frameTotal := 0
 
@@ -85,6 +105,18 @@ func CalculateScoreForTurnFrame(currentFrame string, nextFrame string) int {
 	// If the frame is not a Strike (X) or Spare (/), get the numeric total of what was knocked down
 	if !IsStrike(currentFrameScoresSplit) && !IsSpare(currentFrameScoresSplit) {
 		currentFrameTotal := CalculateScoreForNoStrikeOrSpare(currentFrame)
+
+		frameTotal += currentFrameTotal
+	}
+
+	if IsStrike(currentFrameScoresSplit) {
+		currentFrameTotal := CalculateScoreForStrike(currentFrame, nextFrame)
+
+		frameTotal += currentFrameTotal
+	}
+
+	if IsSpare(currentFrameScoresSplit) {
+		currentFrameTotal := CalculateScoreForSpare(currentFrame, nextFrame)
 
 		frameTotal += currentFrameTotal
 	}
@@ -104,6 +136,61 @@ func CalculateScoreForNoStrikeOrSpare(currentFrame string) int {
 	// Calculate the current frame total for int scores only
 	for _, num := range currentFrameIntScores {
 		frameTotal += num
+	}
+
+	return frameTotal
+}
+
+func CalculateScoreForStrike(currentFrame string, nextFrame string) int {
+	frameTotal := 0
+
+	if currentFrame != "X" {
+		return 0
+	}
+
+	// Assign a score of 10 for the initial strike
+	if currentFrame == "X" {
+		frameTotal += 10
+	}
+
+	// Then find the total of the next turn (nextFrame)
+	// Split out current frame into individual chars
+	nextFrameScoresSplit := strings.Split(nextFrame, "")
+
+	// If the frame is not a Strike (X) or Spare (/), get the numeric total of what was knocked down
+	if !IsStrike(nextFrameScoresSplit) && !IsSpare(nextFrameScoresSplit) {
+		nextFrameTotal := CalculateScoreForNoStrikeOrSpare(nextFrame)
+
+		frameTotal += nextFrameTotal
+	}
+
+	return frameTotal
+}
+
+func CalculateScoreForSpare(currentFrame string, nextFrame string) int {
+	frameTotal := 0
+
+	if !strings.Contains(currentFrame, "/") {
+		return 0
+	}
+
+	// Assign a score of 10 for the initial strike
+	if strings.Contains(currentFrame, "/") {
+		frameTotal += 10
+	}
+
+	// Then find the total of the next turn (nextFrame)
+	// Split out current frame into individual chars
+	nextFrameScoresSplit := strings.Split(nextFrame, "")
+
+	// If the frame is not a Strike (X) or Spare (/), get the numeric total of what was knocked down
+	if !IsStrike(nextFrameScoresSplit) && !IsSpare(nextFrameScoresSplit) {
+		// Get only the first roll of the 2nd frame/turn
+		firstRollOnly := nextFrameScoresSplit[0]
+
+		nextFrameTotal := CalculateScoreForNoStrikeOrSpare(firstRollOnly)
+
+		frameTotal += nextFrameTotal
 	}
 
 	return frameTotal

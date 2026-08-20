@@ -133,6 +133,26 @@ func TestCalculateScoreForNoStrikeOrSpare_ReturnsScore(test *testing.T) {
 	assert.Equal(test, expected, output)
 }
 
+func TestCalculateScoreForStrike_ReturnsScoreForCurrentAndNextFrame(test *testing.T) {
+	inputCurrentFrame := "X"
+	inputNextFrame := "45"
+	expected := 19
+
+	output := CalculateScoreForStrike(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForSpare_ReturnsScoreForCurrentAndNextFrameFirstRollOnly(test *testing.T) {
+	inputCurrentFrame := "4/"
+	inputNextFrame := "32"
+	expected := 13
+
+	output := CalculateScoreForSpare(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
 func TestCalculateScoreForTurnFrame_ReturnsZeroForNoScore(test *testing.T) {
 	inputCurrentFrame := "00"
 	inputNextFrame := ""
@@ -157,6 +177,35 @@ func TestCalculateScoreForTurnFrame_ReturnsScoreForNonStrikeAndNonSpare_SingleFr
 	expected = 5
 
 	output = CalculateScoreForTurnFrame(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForTurnFrame_ReturnsScoreForStrikeAndNextTurn(test *testing.T) {
+	inputCurrentFrame := "X"
+	inputNextFrame := "45"
+	expected := 19
+
+	output := CalculateScoreForTurnFrame(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateScoreForTurnFrame_ReturnsScoreForSpareAndNextTurn(test *testing.T) {
+	inputCurrentFrame := "4/"
+	inputNextFrame := "32"
+	expected := 13
+
+	output := CalculateScoreForTurnFrame(inputCurrentFrame, inputNextFrame)
+
+	assert.Equal(test, expected, output)
+}
+
+func TestCalculateGameScoreTotal_ReturnsTotal(test *testing.T) {
+	input := "X 45 4/ 32"
+	expected := 46
+
+	output := CalculateGameScoreTotal(input)
 
 	assert.Equal(test, expected, output)
 }
