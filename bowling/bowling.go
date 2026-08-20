@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 /* Game:
 - A game has 10 'turns' or 'frames'
@@ -20,6 +24,24 @@ import "fmt"
 
 func main() {
 	fmt.Println("Hello!")
+}
+
+func ParseInputToFrameSlice(input string) [][]string {
+	if len(input) == 0 {
+		return [][]string{}
+	}
+
+	delimString := strings.Split(input, " ")
+
+	frameSlice := [][]string{}
+
+	for i := 0; i < len(delimString); i++ {
+		singleFrame := []string{delimString[i]}
+
+		frameSlice = append(frameSlice, singleFrame)
+	}
+
+	return frameSlice
 }
 
 func IsStrike(frame []string) bool {
@@ -52,4 +74,42 @@ func IsSpare(frame []string) bool {
 	}
 
 	return false
+}
+
+func CalculateScoreForTurnFrame(currentFrame string, nextFrame string) int {
+	frameTotal := 0
+
+	// If the frame is not a strike or spare, get the numeric total of what was knocked down
+	if len(currentFrame) >= 1 && string(currentFrame[0]) != "X" && len(currentFrame) >= 2 && string(currentFrame[1]) != "/" {
+		currentFrameTotal := CalculateScoreForNoStrikeOrSpare(currentFrame)
+
+		frameTotal += currentFrameTotal
+	}
+
+	return frameTotal
+}
+
+func CalculateScoreForNoStrikeOrSpare(currentFrame string) int {
+	frameTotal := 0
+
+	// Scores come in as a string pair, e.g. "13". Split them out and convert to numbers where possible
+	currentFrameScoresSplit := strings.Split(currentFrame, "")
+	currentFrameIntScores := []int{}
+
+	for _, value := range currentFrameScoresSplit {
+		num, err := strconv.Atoi(value)
+
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+
+		currentFrameIntScores = append(currentFrameIntScores, num)
+	}
+
+	// Calculate the current frame total
+	for _, num := range currentFrameIntScores {
+		frameTotal += num
+	}
+
+	return frameTotal
 }
