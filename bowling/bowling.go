@@ -25,7 +25,7 @@ import (
 */
 
 func main() {
-	input := "X 45 4/ 32"
+	input := "X 45 4/ 32 4/ 4/ X 32 44 12"
 
 	score := CalculateGameScoreTotal(input)
 
