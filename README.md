@@ -17,4 +17,4 @@ To run Go tests in each Kata folder:
 
 | Kata      | Link      | Done?     |
 |---        |---        |---        |
-| Bowling 🎳    | [Link](https://learn.madetech.com/technology/katas/bowling/)  | ❌    |
+| Bowling 🎳    | [Link](https://learn.madetech.com/technology/katas/bowling/)  | ✅    |
