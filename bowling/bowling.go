@@ -44,8 +44,8 @@ func ParseInputToFrameSlice(input string) [][]string {
 
 	frameSlice := [][]string{}
 
-	for i := 0; i < len(delimString); i++ {
-		singleFrame := []string{delimString[i]}
+	for _, str := range delimString {
+		singleFrame := []string{str}
 
 		frameSlice = append(frameSlice, singleFrame)
 	}
@@ -90,73 +90,52 @@ func CalculateGameScoreTotal(gameInput string) int {
 
 	splitGameScores := strings.Split(gameInput, " ")
 
-	// Every game is 10 tries
-
-	// Get the scores of every game up to but not including the final turn
-	for i := 0; i < 9; i++ {
+	// Every game is 10 tries: Get the scores of every game up to but not including the final 10th turn
+	for i := range 9 {
 		frameScore := CalculateScoreForTurnFrame(splitGameScores[i], splitGameScores[i+1])
 
 		gameTotal += frameScore
 	}
 
-	// If the 10th try was a strike, we need get the 2nd bonus ball total
+	// Now deal with the 10th turn
 	tenthTryResult := strings.Split(splitGameScores[9], "")
 
 	if IsStrike(tenthTryResult) {
-		// Add the current 10 for a strike first
+		// Strike: Add 10 points for hitting a strike on 10th turn
 		gameTotal += 10
 
+		// Strike: Deal with bonus ball 1 out of 2
 		firstBonusThrowResult := splitGameScores[10]
 
 		if firstBonusThrowResult == "X" {
 			gameTotal += 10
 		} else {
-			// Should be a number if not a strike, convert to number and sum
-			num, err := strconv.Atoi(firstBonusThrowResult)
-
-			if err != nil {
-				fmt.Println("Error: ", err)
-			}
-
-			gameTotal += num
+			gameTotal += CalculateScoreForTurnFrame(firstBonusThrowResult, "")
 		}
 
+		// Strike: Deal with bonus ball 2 out of 2
 		secondBonusThrowResult := splitGameScores[11]
 
 		if secondBonusThrowResult == "X" {
 			gameTotal += 10
 		} else {
-			// Should be a number if not a strike, convert to number and sum
-			num, err := strconv.Atoi(secondBonusThrowResult)
-
-			if err != nil {
-				fmt.Println("Error: ", err)
-			}
-
-			gameTotal += num
+			gameTotal += CalculateScoreForTurnFrame(secondBonusThrowResult, "")
 		}
 	} else if IsSpare(tenthTryResult) {
-		// Add the current 10 for a spare first
+		// Spare: Add 10 points for hitting a spare on 10th turn
 		gameTotal += 10
 
+		// Spare: Deal with bonus ball 1 out of 1
 		firstBonusThrowResult := splitGameScores[10]
 
 		if firstBonusThrowResult == "X" {
 			gameTotal += 10
 		} else {
-			// Should be a number if not a strike, convert to number and sum
-			num, err := strconv.Atoi(firstBonusThrowResult)
-
-			if err != nil {
-				fmt.Println("Error: ", err)
-			}
-
-			gameTotal += num
+			gameTotal += CalculateScoreForTurnFrame(firstBonusThrowResult, "")
 		}
 	} else {
-		frameScore := CalculateScoreForTurnFrame(splitGameScores[9], "")
-
-		gameTotal += frameScore
+		// If 10th turn is not a strike or spare, get the result
+		gameTotal += CalculateScoreForTurnFrame(splitGameScores[9], "")
 	}
 
 	return gameTotal
@@ -170,29 +149,23 @@ func CalculateScoreForTurnFrame(currentFrame string, nextFrame string) int {
 
 	// If the frame is not a Strike (X) or Spare (/), get the numeric total of what was knocked down
 	if !IsStrike(currentFrameScoresSplit) && !IsSpare(currentFrameScoresSplit) {
-		currentFrameTotal := CalculateScoreForNoStrikeOrSpare(currentFrame)
-
-		frameTotal += currentFrameTotal
+		frameTotal += CalculateScoreForNoStrikeOrSpare(currentFrame)
 	}
 
 	if IsStrike(currentFrameScoresSplit) {
 		if nextFrame == "" {
-			return frameTotal
+			frameTotal += CalculateScoreForStrike(currentFrame, "")
 		}
 
-		currentFrameTotal := CalculateScoreForStrike(currentFrame, nextFrame)
-
-		frameTotal += currentFrameTotal
+		frameTotal += CalculateScoreForStrike(currentFrame, nextFrame)
 	}
 
 	if IsSpare(currentFrameScoresSplit) {
 		if nextFrame == "" {
-			return frameTotal
+			frameTotal += CalculateScoreForSpare(currentFrame, "")
 		}
 
-		currentFrameTotal := CalculateScoreForSpare(currentFrame, nextFrame)
-
-		frameTotal += currentFrameTotal
+		frameTotal += CalculateScoreForSpare(currentFrame, nextFrame)
 	}
 
 	return frameTotal
@@ -233,9 +206,7 @@ func CalculateScoreForStrike(currentFrame string, nextFrame string) int {
 
 	// If the frame is not a Strike (X) or Spare (/), get the numeric total of what was knocked down
 	if !IsStrike(nextFrameScoresSplit) && !IsSpare(nextFrameScoresSplit) {
-		nextFrameTotal := CalculateScoreForNoStrikeOrSpare(nextFrame)
-
-		frameTotal += nextFrameTotal
+		frameTotal += CalculateScoreForNoStrikeOrSpare(nextFrame)
 	}
 
 	if IsStrike(nextFrameScoresSplit) || IsSpare(nextFrameScoresSplit) {
@@ -266,9 +237,7 @@ func CalculateScoreForSpare(currentFrame string, nextFrame string) int {
 		// Get only the first roll of the 2nd frame/turn
 		firstRollOnly := nextFrameScoresSplit[0]
 
-		nextFrameTotal := CalculateScoreForNoStrikeOrSpare(firstRollOnly)
-
-		frameTotal += nextFrameTotal
+		frameTotal += CalculateScoreForNoStrikeOrSpare(firstRollOnly)
 	}
 
 	if IsStrike(nextFrameScoresSplit) || IsSpare(nextFrameScoresSplit) {
