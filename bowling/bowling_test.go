@@ -346,20 +346,20 @@ func TestCalculateGameScoreTotal_IncludesStrikeBonusAfterTenthFrameSpare(test *t
 	assert.Equal(test, expected, output)
 }
 
-// func TestCalculateGameScoreTotal_IncludesTwoBonusBallsAfterTenthFrameStrike(test *testing.T) {
-// 	input := "00 00 00 00 00 00 00 00 00 X 5 4"
-// 	expected := 19
+func TestCalculateGameScoreTotal_IncludesTwoBonusBallsAfterTenthFrameStrike(test *testing.T) {
+	input := "00 00 00 00 00 00 00 00 00 X 5 4"
+	expected := 19
 
-// 	output := CalculateGameScoreTotal(input)
+	output := CalculateGameScoreTotal(input)
 
-// 	assert.Equal(test, expected, output)
-// }
+	assert.Equal(test, expected, output)
+}
 
-// func TestCalculateGameScoreTotal_IncludesTwoStrikeBonusBallsAfterTenthFrameStrike(test *testing.T) {
-// 	input := "00 00 00 00 00 00 00 00 00 X X X"
-// 	expected := 30
+func TestCalculateGameScoreTotal_IncludesTwoStrikeBonusBallsAfterTenthFrameStrike(test *testing.T) {
+	input := "00 00 00 00 00 00 00 00 00 X X X"
+	expected := 30
 
-// 	output := CalculateGameScoreTotal(input)
+	output := CalculateGameScoreTotal(input)
 
-// 	assert.Equal(test, expected, output)
-// }
+	assert.Equal(test, expected, output)
+}

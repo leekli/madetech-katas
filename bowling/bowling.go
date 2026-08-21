@@ -93,19 +93,34 @@ func CalculateGameScoreTotal(gameInput string) int {
 	// Every game is 10 tries
 
 	// Get the scores of every game up to but not including the final turn
-	for i := 0; i < (len(splitGameScores) - 1); i++ {
+	for i := 0; i < 9; i++ {
 		frameScore := CalculateScoreForTurnFrame(splitGameScores[i], splitGameScores[i+1])
 
 		gameTotal += frameScore
 	}
 
-	// Now get the score of the final 10th turn
-	frameScore := CalculateScoreForTurnFrame(splitGameScores[9], "")
-
 	// If the 10th try was a strike, we need get the 2nd bonus ball total
 	tenthTryResult := strings.Split(splitGameScores[9], "")
 
 	if IsStrike(tenthTryResult) {
+		// Add the current 10 for a strike first
+		gameTotal += 10
+
+		firstBonusThrowResult := splitGameScores[10]
+
+		if firstBonusThrowResult == "X" {
+			gameTotal += 10
+		} else {
+			// Should be a number if not a strike, convert to number and sum
+			num, err := strconv.Atoi(firstBonusThrowResult)
+
+			if err != nil {
+				fmt.Println("Error: ", err)
+			}
+
+			gameTotal += num
+		}
+
 		secondBonusThrowResult := splitGameScores[11]
 
 		if secondBonusThrowResult == "X" {
@@ -119,11 +134,30 @@ func CalculateGameScoreTotal(gameInput string) int {
 			}
 
 			gameTotal += num
-
 		}
-	}
+	} else if IsSpare(tenthTryResult) {
+		// Add the current 10 for a spare first
+		gameTotal += 10
 
-	gameTotal += frameScore
+		firstBonusThrowResult := splitGameScores[10]
+
+		if firstBonusThrowResult == "X" {
+			gameTotal += 10
+		} else {
+			// Should be a number if not a strike, convert to number and sum
+			num, err := strconv.Atoi(firstBonusThrowResult)
+
+			if err != nil {
+				fmt.Println("Error: ", err)
+			}
+
+			gameTotal += num
+		}
+	} else {
+		frameScore := CalculateScoreForTurnFrame(splitGameScores[9], "")
+
+		gameTotal += frameScore
+	}
 
 	return gameTotal
 }
